@@ -1,0 +1,30 @@
+# [[https://melpa.org/#/burnish][file:https://melpa.org/packages/burnish-badge.svg]] [[https://stable.melpa.org/#/burnish][file:https://stable.melpa.org/packages/burnish-badge.svg]]
+
+* burnish
+
+burnish is TBD.
+
+* Requirements
+
+burnish requires TBD.
+
+* Install
+
+burnish TBD.
+
+#+begin_src elisp :lexical no
+  (require 'burnish)
+  (burnish-init)
+#+end_src
+
+  
+* Sponsorship
+
+If you enjoy using burnish, please consider buying me a coffee to help support its development and maintenance.
+
+[[https://www.buymeacoffee.com/kickingvegas][http://yummymelon.com/devnull/theme/images/icons/buymecoffee.png]]
+
+  
+* Acknowledgments
+
+A heartfelt thanks to all the contributors to the GNU Emacs ecosystem from which burnish builds from. This work would not be possible without your efforts.
