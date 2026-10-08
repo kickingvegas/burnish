@@ -20,7 +20,7 @@ Copyright © 2026 Charles Y@. Choi
 @finalout
 @titlepage
 @title Burnish User Guide
-@subtitle for version 0.0.0
+@subtitle for version 0.0.1-rc.2
 @author Charles Y@. Choi (@email{kickingvegas@@gmail.com})
 @page
 @vskip 0pt plus 1filll
@@ -33,14 +33,13 @@ Copyright © 2026 Charles Y@. Choi
 @node Top
 @top Burnish User Guide
 
-Version: 0.0.0
+Version: 0.0.1-rc.2
 
 Copyright © 2026 @w{Charles Y. Choi}
 
 THIS DOCUMENT IS WIP@.
 
-@strong{Burnish} is an Elisp package to automate the export and viewing of an Org file (@ref{Top,,,org,}). With @strong{Burnish}@comma{} users can rapidly iterate and review changes to their Org document.
-
+@strong{Burnish} is an Elisp package that automates the export and viewing of an Org file (@ref{Top,,,org,}). With @strong{Burnish}@comma{} users can rapidly iterate and review changes to an Org file.
 
 If you enjoy using @strong{Burnish}@comma{} please consider buying me a coffee to help support its development and maintenance.
 
@@ -76,10 +75,10 @@ Usage
 
 @cindex Features
 
-
 @itemize
 @item
-Automated export and view support for the following Org backends:
+Automated export and view support for the following Org backends (@ref{Exporting,,,org,}):
+
 @itemize
 @item
 HTML
@@ -88,19 +87,23 @@ Markdown
 @item
 ODT
 @item
-Texinfo
+Texinfo/Info
 @item
 @LaTeX{} PDF
 @end itemize
 
 @item
-Export and view can be triggered via @code{save-buffer} or by a customizable key binding (default @code{C-<f5>}).
+Trigger export and view via @code{save-buffer} or by a customizable key binding (default @kbd{C-<f5>}).
 
 @item
-Support for additional export formats can be done with customizable variables.
+Support for additional export backends.
+
+@strong{Burnish} provides a high-degree of customization to support different export and view behaviors for both built-in and added backends.
 
 @item
-Control @strong{Burnish} operation on a per Org file basis.
+File-level control of running @strong{Burnish}.
+
+Only automate export and view on the files you specify.
 @end itemize
 
 @node Requirements
@@ -120,47 +123,44 @@ Control @strong{Burnish} operation on a per Org file basis.
 
 If manually installed@comma{} ensure that @code{burnish.el} is in your @code{load-path}.
 
-Add the following to your Emacs initialization file.
+@strong{Burnish} is intended to be run as a minor mode (@code{burnish-mode}) to Org mode. It can be added as a hook to @code{org-mode-hook}. This will always enable @code{burnish-mode} whenever an Org file is loaded.
 
 @lisp
-(require 'burnish) ; optional if autoloaded
-(burnish-bind)
+(add-hook 'org-mode-hook #'burnish-mode)
 @end lisp
 
-@code{burnish-bind} will do the following:
+Alternately @code{burnish-mode} can be invoked in an Org buffer as desired:
 
-@itemize
-@item
-Add the command @code{burnish} to the hook variable @code{after-save-hook}.
-@item
-Bind the command @code{burnish} to the key set in the variable @code{burnish-export-key} (default @code{C-<f5>}).
-@end itemize
+@lisp
+M-x burnish-mode RET
+@end lisp
+
+With @code{burnish-mode}@comma{} automated export of an Org file and viewing the result is done on every file save. If this behavior is not desired@comma{} then an alternate install is to bind the command @code{burnish}.
+
+@lisp
+(keymap-set org-mode-map burnish-export-key #'burnish)
+@end lisp
+
+@code{burnish-export-key} is a customizable variable whose default value is @kbd{C-<f5>}.
 
 @node Usage
 @chapter Usage
 
-For @strong{Burnish} to work@comma{} it requires that the local file variable @code{burnish-backend} be defined in the Org file. The value of this variable is set to a target Org backend. By default@comma{}  @code{burnish-backend} supports the following values:
+When the minor mode @code{burnish-mode} is enabled@comma{} automated export of an Org file and viewing the result is performed on every save (@code{save-buffer}) of said file. However@comma{} automated export and view only works when the local file variable @code{burnish-backend} is defined in the Org file as detailed in @ref{Specifying File Variables,,,emacs,}. If @code{burnish-backend} is not defined in an Org file@comma{} nothing will be done by @strong{Burnish} on said file.
 
-@itemize
-@item
-html — export to HTML
-@item
-md — export to Markdown
-@item
-odt — export to Open Office Doc
-@item
-latex — export to @LaTeX{}
-@item
-texinfo — export to Texinfo
-@end itemize
-
-An example of defining @code{burnish-backend} in an Org file is shown below@comma{} where this text is appended at the end of the file. For more detail on file variables@comma{} see @ref{Specifying File Variables,,,emacs,}.
+An example of setting @code{burnish-backend} is shown below@comma{} where the text is appended at the end of the file.
 
 @example
-
+# Local Variables:
+# burnish-backend: html
+# End:
 @end example
 
-To set @code{burnish-backend} as a local variable@comma{} either load the file or revert it using @code{revert-buffer}. Any subsequent changes to the Org file will trigger an automatic export and view of the output.
+Rather than typing the above in an Org file@comma{} the command @code{burnish-select-backend} will insert this for you@comma{} prompting for an export backend with completion support.
+
+To directly export an Org file and view the result@comma{} invoke the command @code{burnish} by its key binding (default: @kbd{C-<f5>}) or by direct invocation (@kbd{M-x}).
+
+Details on commands and customization of @strong{Burnish} can be found in the menu sections below.
 
 @menu
 * Commands::
@@ -172,46 +172,41 @@ To set @code{burnish-backend} as a local variable@comma{} either load the file o
 
 @vindex burnish
 @deffn Command burnish
-Run the function that exports and views the Org file.
+Run the function that exports the Org file and views the result as specified by @code{burnish-backend}.
 
-This function is specified by two variables:
+This function is governed by two variables:
 
 @itemize
 @item
-@code{burnish-export-functions} — map containing (backend@comma{} export function) pairs.
+@code{burnish-backend} — local file variable specifying which export backend to use.
 
 @item
-@code{burnish-backend} — local file variable specifying with backend to use.
+@code{burnish-export-functions} — alist map whose pairs are (SYMBOL FUNCTION)@comma{} where SYMBOL is a backend key and FUNCTION is its corresponding export function.
 @end itemize
-@end deffn
-
-@vindex burnish-bind
-@deffn Command burnish-bind
-Turn on automatic export and viewing of an Org file.
-
-For an Org file that has the local file variable @code{burnish-backend} specified@comma{}
-
-Configure Emacs to run @code{burnish} whenever an Org file with @code{burnish-backend} defined is saved.
-
-This command also binds @code{burnish} to the key sequence specified by @code{burnish-export-key}.
-@end deffn
-
-@vindex burnish-unbind
-@deffn Command burnish-unbind
-Turn off automatic export and viewing of an Org file.
-
-This command undoes all configuration done by @code{burnish-bind}.
 @end deffn
 
 @vindex burnish-select-backend
 @deffn Command burnish-select-backend CHOICE
-Set local variable ‘burnish-backend’ to CHOICE in Org file.
+Prompt the user for CHOICE and set the local file variable @code{burnish-backend} to it in an Org file.
 
-This command modifies the Org file to set the local file variable @code{burnish-backend} within it.
+The prompt supports completion where choices are taken from the keys defined in @code{burnish-export-functions}.
 
-See @ref{Specifying File Variables,,,emacs,} for more detail on local file variables.
+This command will either add or update @code{burnish-backend} as detailed in @ref{Specifying File Variables,,,emacs,}.
+@end deffn
 
-When run interactively@comma{} @code{burnish-select-backend} prompts the user for a backend (CHOICE) to use when exporting and viewing an Org file. The prompt supports completion whose choices are the backend keys defined in the customizable variable @code{burnish-export-functions}.
+@vindex burnish-mode
+@deffn Command burnish-mode
+Minor mode to enable automated Org file export and viewing of the result.
+
+When @code{burnish-mode} is enabled:
+@itemize
+@item
+Automated export and view is triggered by a file save (@code{save-buffer}).
+@item
+The key sequence @code{burnish-export-key} is bound to the command @code{burnish}.
+@end itemize
+
+Disabling @code{burnish-mode} undoes the above.
 @end deffn
 
 @node Customization
@@ -221,18 +216,35 @@ When run interactively@comma{} @code{burnish-select-backend} prompts the user fo
 
 @defvar burnish-backend
 Local file variable that must be set in an Org file for the @code{burnish} command to run.
+
+It is recommended to use the command @code{burnish-select-backend} to edit this variable in an Org file.
+
+The values supported by @code{burnish-backend} are the keys of the alist @code{burnish-export-functions}. By default these keys are:
+
+@itemize
+@item
+html — export to HTML
+@item
+md — export to Markdown
+@item
+odt — export to Open Office Doc
+@item
+info — export to Info via Texinfo
+@item
+latex-pdf — export to @LaTeX{}
+@end itemize
 @end defvar
 
-@defopt @code{burnish-export-functions}
+@defopt burnish-export-functions
 Alist of export backends and their corresponding functions.
 
 Each element is a cons cell (SYMBOL . FUNCTION) where SYMBOL is an export backend and FUNCTION is its corresponding export function.
 
-This variable can be amended to support additional export backends provided that an export function for the new backend is defined.
+This customizable variable can be amended to support additional export backends provided that an export function for the new backend is defined. Similarly@comma{} an existing export function can be overridden with a user-defined export function.
 @end defopt
 
 @defopt burnish-export-key
-String used to define the key sequence to bind the command @code{burnish}. Default value @kbd{C-<f5>}.
+Key sequence to bind the command @code{burnish}. Default value @kbd{C-<f5>}.
 @end defopt
 
 @node Feedback & Discussion
@@ -268,6 +280,8 @@ Always choose love.
 @chapter Acknowledgments
 
 @cindex Acknowledgments
+
+Thanks goes out to the contributors of Org Mode and GNU Emacs@comma{} whose work this builds upon. This work would not be possible without your efforts.
 
 @node Main Index
 @chapter Main Index
