@@ -20,7 +20,7 @@ THIS PROJECT IS WIP.
 
 - Support for additional export backends.
 
-  *Burnish* provides a high-degree of customization to support different export and view behaviors for both built-in and added backends.
+  *Burnish* provides a high-degree of customization to support different export and view behaviors for both built-in and user-added backends.
 
 - File-level control of running *Burnish*.
 
@@ -54,14 +54,24 @@ With ~burnish-mode~, automated export of an Org file and viewing the result is d
 
 ~burnish-export-key~ is a customizable variable whose default value is ~C-<f5>~.
 
-~burnish-bind~ will do the following:
-
-- Add the command ~burnish~ to the hook variable ~after-save-hook~.
-- Bind the command ~burnish~ to the key set in the variable ~burnish-export-key~ (default ~C-<f5>~).
   
 * Usage
 
-Refer to the [[https://kickingvegas.github.io/burnish/][Burnish User Guide]] for guidance.
+When the minor mode ~burnish-mode~ is enabled, automated export of an Org file and viewing the result is performed on every save (~save-buffer~) of said file. However, automated export and view only works when the local file variable ~burnish-backend~ is defined in the Org file as detailed in [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html][Specifying File Variables (GNU Emacs Manual)]]. If ~burnish-backend~ is not defined in an Org file, nothing will be done by *Burnish* on said file.
+
+An example of setting ~burnish-backend~ is shown below, where the text is appended at the end of the file.
+
+#+begin_example
+# Local Variables:
+# burnish-backend: html
+# End:
+#+end_example
+
+Rather than typing the above in an Org file, the command ~burnish-select-backend~ will insert this for you, prompting for an export backend with completion support.
+
+To directly export an Org file and view the result, invoke the command ~burnish~ by its key binding (default: ~C-<f5>~) or by direct invocation (~M-x~)
+
+Refer to the [[https://kickingvegas.github.io/burnish/][Burnish User Guide]] for more details on using and customizing it.
 
 * Sponsorship
 
@@ -72,6 +82,5 @@ If you enjoy using *Burnish*, please consider buying me a coffee to help support
   
 * Acknowledgments
 
-Thanks goes out to the contributors of Org Mode and GNU Emacs, whose work this builds upon. This work would not be possible without your efforts. 
-
+Thanks goes out to the contributors of Org Mode and GNU Emacs, whose work this builds upon. This work would not be possible without your efforts.
 
