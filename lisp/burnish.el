@@ -81,6 +81,10 @@ An example of setting `burnish-backend' is shown below:
 Any changes to this variable in the Org file will require reloading it
 with the `revert-buffer' command.")
 
+(defvar-keymap burnish-mode-map
+  :doc "Keymap for `burnish-mode'."
+  burnish-export-key #'burnish)
+
 
 
 ;; Export Functions
@@ -139,20 +143,6 @@ with the `revert-buffer' command.")
        "burnish-backend: %s is not in burnish-export-functions"
        burnish-backend))))
 
-;;;###autoload (autoload 'burnish-bind "burnish" nil t)
-(defun burnish-bind ()
-  "Bind burnish to `org-mode-map' and add to `after-save-hook'."
-  (interactive)
-  (keymap-set org-mode-map burnish-export-key #'burnish)
-  (add-hook 'after-save-hook #'burnish))
-
-;;;###autoload (autoload 'burnish-unbind "burnish" nil t)
-(defun burnish-unbind ()
-  "Unbind burnish from `org-mode-map' and remove from `after-save-hook'."
-  (interactive)
-  (keymap-unset org-mode-map burnish-export-key)
-  (remove-hook 'after-save-hook #'burnish))
-
 ;;;###autoload (autoload 'burnish-select-backend "burnish" nil t)
 (defun burnish-select-backend (choice)
   "Edit local variable `burnish-backend' to CHOICE in Org file.
@@ -171,6 +161,22 @@ To load the updated value, call `revert-buffer'."
         (add-file-local-variable 'burnish-backend (intern choice))
         (save-buffer))
     (error "Error: burnish-select-backend must be run in an Org file")))
+
+
+
+;; Minor Mode
+
+;;;###autoload (autoload 'burnish-mode "burnish" nil t)
+(define-minor-mode burnish-mode
+  "Minor mode for Burnish."
+  :init-value nil
+  :lighter " Bnsh"
+  :keymap burnish-mode-map
+  (if (derived-mode-p 'org-mode)
+      (if burnish-mode
+          (add-hook 'after-save-hook #'burnish 0 t)
+        (remove-hook 'after-save-hook #'burnish t))
+    (error "Minor mode `burnish-mode' only supported for `org-mode'")))
 
 (provide 'burnish)
 ;;; burnish.el ends here

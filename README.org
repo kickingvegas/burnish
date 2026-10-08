@@ -1,26 +1,30 @@
 # [[https://melpa.org/#/burnish][file:https://melpa.org/packages/burnish-badge.svg]] [[https://stable.melpa.org/#/burnish][file:https://stable.melpa.org/packages/burnish-badge.svg]]
 
 * Burnish
-
 THIS PROJECT IS WIP.
 
-*Burnish* is an Elisp package to automate the export and viewing of an [[https://orgmode.org/][Org file]]. With *Burnish*, users can rapidly iterate and review changes to their Org document.
+*Burnish* is an Elisp package that automates the export and viewing of an [[https://orgmode.org/][Org file]]. With *Burnish*, users can rapidly iterate and review changes to an Org file.
+
 
 * Features
 
-- Trigger export and view via ~save-buffer~ or by a customizable key binding (default ~C-<f5>~).
+- Automated export and view support for the following [[https://www.gnu.org/software/emacs/manual/html_mono/org.html#Exporting][Org backends]]:
 
-- Automated export and view support for the following Org backends:
   - HTML
   - Markdown
   - ODT
-  - Texinfo
+  - Texinfo/Info
   - LaTeX PDF
 
-- Support for other backends is supported through customizable variables.
+- Trigger export and view via ~save-buffer~ or by a customizable key binding (default ~C-<f5>~).
 
-- Control *Burnish* operation on a per Org file basis.
-  
+- Support for additional export backends.
+
+  *Burnish* provides a high-degree of customization to support different export and view behaviors for both built-in and added backends.
+
+- File-level control of running *Burnish*.
+
+  Only automate export and view on the files you specify.
 
 * Requirements
 
@@ -30,12 +34,25 @@ THIS PROJECT IS WIP.
 
 If manually installed, ensure that ~burnish.el~ is in your ~load-path~.
 
-Add the following to your Emacs initialization file.
+*Burnish* is intended to be run as a minor mode (~burnish-mode~) to Org mode. It can be added as a hook to ~org-mode-hook~. This will always enable ~burnish-mode~ whenever an Org file is loaded.
 
 #+begin_src elisp :lexical no
-  (require 'burnish) ; optional if autoloaded
-  (burnish-bind)
+  (add-hook 'org-mode-hook #'burnish-mode)
 #+end_src
+
+Alternately ~burnish-mode~ can be invoked in an Org buffer as desired:
+
+#+begin_src elisp :lexical no
+  M-x burnish-mode RET
+#+end_src
+
+With ~burnish-mode~, automated export of an Org file and viewing the result is done on every file save. If this behavior is not desired, then an alternate install is to bind the command ~burnish~.
+
+#+begin_src elisp :lexical no
+  (keymap-set org-mode-map burnish-export-key #'burnish)
+#+end_src
+
+~burnish-export-key~ is a customizable variable whose default value is ~C-<f5>~.
 
 ~burnish-bind~ will do the following:
 
@@ -44,26 +61,7 @@ Add the following to your Emacs initialization file.
   
 * Usage
 
-For *Burnish* to work, it requires that the local variable ~burnish-backend~ be defined in the Org file. The value of this variable is set to a target Org backend.
-
-By default,  ~burnish-backend~ supports the following values:
-
-- html — export to HTML
-- md — export to Markdown
-- odt — export to Open Office Doc
-- latex — export to LaTeX
-- texinfo — export to Texinfo
-
-An example of defining ~burnish-backend~ in an Org file is shown below, where this text is appended at the end of the file. For more detail on file variables, see [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html][Specifying File Variables (GNU Emacs Manual)]].
-
-#+begin_example
-  # Local Variables:
-  # burnish-backend: html
-  # End:
-#+end_example
-
-To set ~burnish-backend~ as a local variable, either load the file or revert it using ~revert-buffer~. Any subsequent changes to the Org file will trigger an automatic export and view of the output.
-
+Refer to the [[https://kickingvegas.github.io/burnish/][Burnish User Guide]] for guidance.
 
 * Sponsorship
 
@@ -74,5 +72,6 @@ If you enjoy using *Burnish*, please consider buying me a coffee to help support
   
 * Acknowledgments
 
-A heartfelt thanks to all the contributors to the GNU Emacs ecosystem from which burnish builds from. This work would not be possible without your efforts. 
+Thanks goes out to the contributors of Org Mode and GNU Emacs, whose work this builds upon. This work would not be possible without your efforts. 
+
 

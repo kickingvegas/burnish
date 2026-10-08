@@ -24,8 +24,7 @@ Version: {{{version}}}
 
 THIS DOCUMENT IS WIP.
 
-*Burnish* is an Elisp package to automate the export and viewing of an Org file ([[info:org#Top]]). With *Burnish*, users can rapidly iterate and review changes to their Org document.
-
+*Burnish* is an Elisp package that automates the export and viewing of an Org file ([[info:org#Top]]). With *Burnish*, users can rapidly iterate and review changes to an Org file.
 
 #+INCLUDE: "./sponsorship.org"
 
@@ -42,20 +41,23 @@ Copyright © 2026 Charles Y. Choi
 :END:
 #+CINDEX: Features
 
+- Automated export and view support for the following Org backends ([[info:org#Exporting]]):
 
-- Automated export and view support for the following Org backends:
   - HTML
   - Markdown
   - ODT
-  - Texinfo
+  - Texinfo/Info
   - LaTeX PDF
 
-- Export and view can be triggered via ~save-buffer~ or by a customizable key binding (default ~C-<f5>~).
+- Trigger export and view via ~save-buffer~ or by a customizable key binding (default {{{kbd(C-<f5>)}}}).
 
-- Support for additional export formats can be done with customizable variables.
+- Support for additional export backends.
 
-- Control *Burnish* operation on a per Org file basis.
+  *Burnish* provides a high-degree of customization to support different export and view behaviors for both built-in and added backends.
 
+- File-level control of running *Burnish*.
+
+  Only automate export and view on the files you specify.
 
 
 * Requirements
@@ -75,95 +77,105 @@ Copyright © 2026 Charles Y. Choi
 
 If manually installed, ensure that ~burnish.el~ is in your ~load-path~.
 
-Add the following to your Emacs initialization file.
+*Burnish* is intended to be run as a minor mode (~burnish-mode~) to Org mode. It can be added as a hook to ~org-mode-hook~. This will always enable ~burnish-mode~ whenever an Org file is loaded.
 
 #+begin_src elisp :lexical no
-  (require 'burnish) ; optional if autoloaded
-  (burnish-bind)
+  (add-hook 'org-mode-hook #'burnish-mode)
 #+end_src
 
-~burnish-bind~ will do the following:
+Alternately ~burnish-mode~ can be invoked in an Org buffer as desired:
 
-- Add the command ~burnish~ to the hook variable ~after-save-hook~.
-- Bind the command ~burnish~ to the key set in the variable ~burnish-export-key~ (default ~C-<f5>~).
+#+begin_src elisp :lexical no
+  M-x burnish-mode RET
+#+end_src
 
+With ~burnish-mode~, automated export of an Org file and viewing the result is done on every file save. If this behavior is not desired, then an alternate install is to bind the command ~burnish~.
+
+#+begin_src elisp :lexical no
+  (keymap-set org-mode-map burnish-export-key #'burnish)
+#+end_src
+
+~burnish-export-key~ is a customizable variable whose default value is {{{kbd(C-<f5>)}}}.
 
 * Usage
 
-For *Burnish* to work, it requires that the local file variable ~burnish-backend~ be defined in the Org file. The value of this variable is set to a target Org backend. By default,  ~burnish-backend~ supports the following values:
+When the minor mode ~burnish-mode~ is enabled, automated export of an Org file and viewing the result is performed on every save (~save-buffer~) of said file. However, automated export and view only works when the local file variable ~burnish-backend~ is defined in the Org file as detailed in [[info:emacs#Specifying File Variables]]. If ~burnish-backend~ is not defined in an Org file, nothing will be done by *Burnish* on said file.
 
-- html — export to HTML
-- md — export to Markdown
-- odt — export to Open Office Doc
-- latex — export to LaTeX
-- texinfo — export to Texinfo
-
-An example of defining ~burnish-backend~ in an Org file is shown below, where this text is appended at the end of the file. For more detail on file variables, see [[info:emacs#Specifying File Variables]].
+An example of setting ~burnish-backend~ is shown below, where the text is appended at the end of the file.
 
 #+begin_example
+# Local Variables:
+# burnish-backend: html
+# End:
 #+end_example
 
-To set ~burnish-backend~ as a local variable, either load the file or revert it using ~revert-buffer~. Any subsequent changes to the Org file will trigger an automatic export and view of the output.
+Rather than typing the above in an Org file, the command ~burnish-select-backend~ will insert this for you, prompting for an export backend with completion support.
+
+To directly export an Org file and view the result, invoke the command ~burnish~ by its key binding (default: {{{kbd(C-<f5>)}}}) or by direct invocation ({{{kbd(M-x)}}}).
+
+Details on commands and customization of *Burnish* can be found in the menu sections below.
+
+# To set ~burnish-backend~ as a local variable, either load the file or revert it using ~revert-buffer~. Any subsequent changes to the Org file will trigger an automatic export and view of the output.
 
 
 ** Commands
 
 #+VINDEX: burnish
 - Command: burnish ::
-  Run the function that exports and views the Org file.
+  Run the function that exports the Org file and views the result as specified by ~burnish-backend~.
 
-  This function is specified by two variables:
+  This function is governed by two variables:
 
-  - ~burnish-export-functions~ — map containing (backend, export function) pairs.
+  - ~burnish-backend~ — local file variable specifying which export backend to use.
 
-  - ~burnish-backend~ — local file variable specifying with backend to use.
+  - ~burnish-export-functions~ — alist map whose pairs are (SYMBOL FUNCTION), where SYMBOL is a backend key and FUNCTION is its corresponding export function.
 
-#+VINDEX: burnish-bind
-- Command: burnish-bind ::
-
-  Turn on automatic export and viewing of an Org file.
-
-  For an Org file that has the local file variable ~burnish-backend~ specified,
-
-  Configure Emacs to run ~burnish~ whenever an Org file with ~burnish-backend~ defined is saved.
-
-  This command also binds ~burnish~ to the key sequence specified by ~burnish-export-key~.
-
-#+VINDEX: burnish-unbind
-- Command: burnish-unbind ::
-
-  Turn off automatic export and viewing of an Org file.
-
-  This command undoes all configuration done by ~burnish-bind~.
 
 #+VINDEX: burnish-select-backend
 - Command: burnish-select-backend CHOICE ::
+  Prompt the user for CHOICE and set the local file variable ~burnish-backend~ to it in an Org file.
 
-  Set local variable ‘burnish-backend’ to CHOICE in Org file.
+  The prompt supports completion where choices are taken from the keys defined in ~burnish-export-functions~.
+  
+  This command will either add or update ~burnish-backend~ as detailed in [[info:emacs#Specifying File Variables]].
 
-  This command modifies the Org file to set the local file variable ~burnish-backend~ within it.
 
-  See [[info:emacs#Specifying File Variables]] for more detail on local file variables.
+#+VINDEX: burnish-mode
+- Command: burnish-mode ::
+  Minor mode to enable automated Org file export and viewing of the result.
 
-  When run interactively, ~burnish-select-backend~ prompts the user for a backend (CHOICE) to use when exporting and viewing an Org file. The prompt supports completion whose choices are the backend keys defined in the customizable variable ~burnish-export-functions~.
+  When ~burnish-mode~ is enabled:
+  - Automated export and view is triggered by a file save (~save-buffer~).
+  - The key sequence ~burnish-export-key~ is bound to the command ~burnish~.
 
+  Disabling ~burnish-mode~ undoes the above.
+
+  
 ** Customization
 #+CINDEX: Customization
 
 - Variable: burnish-backend ::
   Local file variable that must be set in an Org file for the ~burnish~ command to run.
 
-- User Option: ~burnish-export-functions~ ::
+  It is recommended to use the command ~burnish-select-backend~ to edit this variable in an Org file.
+
+  The values supported by ~burnish-backend~ are the keys of the alist ~burnish-export-functions~. By default these keys are:
+  
+  - html — export to HTML
+  - md — export to Markdown
+  - odt — export to Open Office Doc
+  - info — export to Info via Texinfo
+  - latex-pdf — export to LaTeX
+  
+- User Option: burnish-export-functions ::
   Alist of export backends and their corresponding functions.
 
   Each element is a cons cell (SYMBOL . FUNCTION) where SYMBOL is an export backend and FUNCTION is its corresponding export function.
 
-  This variable can be amended to support additional export backends provided that an export function for the new backend is defined.
+  This customizable variable can be amended to support additional export backends provided that an export function for the new backend is defined. Similarly, an existing export function can be overridden with a user-defined export function.
 
 - User Option: burnish-export-key ::
-  String used to define the key sequence to bind the command ~burnish~. Default value {{{kbd(C-<f5>)}}}.
-
-
+  Key sequence to bind the command ~burnish~. Default value {{{kbd(C-<f5>)}}}.
 
 * Feedback & Discussion
 #+CINDEX: Feedback
@@ -189,6 +201,8 @@ Always choose love.
 
 * Acknowledgments
 #+CINDEX: Acknowledgments
+
+Thanks goes out to the contributors of Org Mode and GNU Emacs, whose work this builds upon. This work would not be possible without your efforts. 
 
 * Main Index
 :PROPERTIES:
