@@ -1,30 +1,78 @@
 # [[https://melpa.org/#/burnish][file:https://melpa.org/packages/burnish-badge.svg]] [[https://stable.melpa.org/#/burnish][file:https://stable.melpa.org/packages/burnish-badge.svg]]
 
-* burnish
+* Burnish
 
-burnish is TBD.
+THIS PROJECT IS WIP.
+
+*Burnish* is an Elisp package to automate the export and viewing of an [[https://orgmode.org/][Org file]]. With *Burnish*, users can rapidly iterate and review changes to their Org document.
+
+* Features
+
+- Trigger export and view via ~save-buffer~ or by a customizable key binding (default ~C-<f5>~).
+
+- Automated export and view support for the following Org backends:
+  - HTML
+  - Markdown
+  - ODT
+  - Texinfo
+  - LaTeX PDF
+
+- Support for other backends is supported through customizable variables.
+
+- Control *Burnish* operation on a per Org file basis.
+  
 
 * Requirements
 
-burnish requires TBD.
+- [[https://www.gnu.org/software/emacs/][GNU Emacs]] 30.1+
 
 * Install
 
-burnish TBD.
+If manually installed, ensure that ~burnish.el~ is in your ~load-path~.
+
+Add the following to your Emacs initialization file.
 
 #+begin_src elisp :lexical no
-  (require 'burnish)
-  (burnish-init)
+  (require 'burnish) ; optional if autoloaded
+  (burnish-bind)
 #+end_src
 
+~burnish-bind~ will do the following:
+
+- Add the command ~burnish~ to the hook variable ~after-save-hook~.
+- Bind the command ~burnish~ to the key set in the variable ~burnish-export-key~ (default ~C-<f5>~).
   
+* Usage
+
+For *Burnish* to work, it requires that the local variable ~burnish-backend~ be defined in the Org file. The value of this variable is set to a target Org backend.
+
+By default,  ~burnish-backend~ supports the following values:
+
+- html — export to HTML
+- md — export to Markdown
+- odt — export to Open Office Doc
+- latex — export to LaTeX
+- texinfo — export to Texinfo
+
+An example of defining ~burnish-backend~ in an Org file is shown below, where this text is appended at the end of the file. For more detail on file variables, see [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html][Specifying File Variables (GNU Emacs Manual)]].
+
+#+begin_example
+  # Local Variables:
+  # burnish-backend: html
+  # End:
+#+end_example
+
+To set ~burnish-backend~ as a local variable, either load the file or revert it using ~revert-buffer~. Any subsequent changes to the Org file will trigger an automatic export and view of the output.
+
+
 * Sponsorship
 
-If you enjoy using burnish, please consider buying me a coffee to help support its development and maintenance.
+If you enjoy using *Burnish*, please consider buying me a coffee to help support its development and maintenance.
 
 [[https://www.buymeacoffee.com/kickingvegas][http://yummymelon.com/devnull/theme/images/icons/buymecoffee.png]]
 
   
 * Acknowledgments
 
-A heartfelt thanks to all the contributors to the GNU Emacs ecosystem from which burnish builds from. This work would not be possible without your efforts.
+A heartfelt thanks to all the contributors to the GNU Emacs ecosystem from which burnish builds from. This work would not be possible without your efforts. 
+
