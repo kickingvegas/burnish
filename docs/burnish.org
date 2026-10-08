@@ -1,6 +1,6 @@
 #+startup: overview nologdone
 #+startup: showeverything
-#+TITLE: burnish User Guide
+#+TITLE: Burnish User Guide
 #+SUBTITLE: for version {{{version}}}
 #+AUTHOR: Charles Y. Choi
 #+EMAIL: kickingvegas@gmail.com
@@ -14,16 +14,19 @@
 #+TEXINFO_HEADER: @paragraphindent none
 #+TEXINFO_TITLEPAGE: t
 #+TEXINFO_DIR_CATEGORY: Emacs misc features
-#+TEXINFO_DIR_NAME: burnish
-#+TEXINFO_DIR_DESC: TBD
-#+TEXINFO_PRINTED_TITLE: burnish User Guide
+#+TEXINFO_DIR_NAME: Burnish
+#+TEXINFO_DIR_DESC: Automate Org file export and view.
+#+TEXINFO_PRINTED_TITLE: Burnish User Guide
 
 Version: {{{version}}}
 
 #+TEXINFO: Copyright © 2026 @w{Charles Y. Choi}
 
-burnish is TBD.
-    
+THIS DOCUMENT IS WIP.
+
+*Burnish* is an Elisp package to automate the export and viewing of an Org file ([[info:org#Top]]). With *Burnish*, users can rapidly iterate and review changes to their Org document.
+
+
 #+INCLUDE: "./sponsorship.org"
 
 * Copying
@@ -39,7 +42,21 @@ Copyright © 2026 Charles Y. Choi
 :END:
 #+CINDEX: Features
 
-TBD  
+
+- Automated export and view support for the following Org backends:
+  - HTML
+  - Markdown
+  - ODT
+  - Texinfo
+  - LaTeX PDF
+
+- Export and view can be triggered via ~save-buffer~ or by a customizable key binding (default ~C-<f5>~).
+
+- Support for additional export formats can be done with customizable variables.
+
+- Control *Burnish* operation on a per Org file basis.
+
+
 
 * Requirements
 :PROPERTIES:
@@ -47,7 +64,7 @@ TBD
 :END:
 #+CINDEX: Requirements
 
-TBD
+- [[https://www.gnu.org/software/emacs/][GNU Emacs]] 30.1+
 
 
 * Install
@@ -56,14 +73,104 @@ TBD
 :END:
 #+CINDEX: Install
 
-TBD
+If manually installed, ensure that ~burnish.el~ is in your ~load-path~.
+
+Add the following to your Emacs initialization file.
+
+#+begin_src elisp :lexical no
+  (require 'burnish) ; optional if autoloaded
+  (burnish-bind)
+#+end_src
+
+~burnish-bind~ will do the following:
+
+- Add the command ~burnish~ to the hook variable ~after-save-hook~.
+- Bind the command ~burnish~ to the key set in the variable ~burnish-export-key~ (default ~C-<f5>~).
+
+
+* Usage
+
+For *Burnish* to work, it requires that the local file variable ~burnish-backend~ be defined in the Org file. The value of this variable is set to a target Org backend. By default,  ~burnish-backend~ supports the following values:
+
+- html — export to HTML
+- md — export to Markdown
+- odt — export to Open Office Doc
+- latex — export to LaTeX
+- texinfo — export to Texinfo
+
+An example of defining ~burnish-backend~ in an Org file is shown below, where this text is appended at the end of the file. For more detail on file variables, see [[info:emacs#Specifying File Variables]].
+
+#+begin_example
+#+end_example
+
+To set ~burnish-backend~ as a local variable, either load the file or revert it using ~revert-buffer~. Any subsequent changes to the Org file will trigger an automatic export and view of the output.
+
+
+** Commands
+
+#+VINDEX: burnish
+- Command: burnish ::
+  Run the function that exports and views the Org file.
+
+  This function is specified by two variables:
+
+  - ~burnish-export-functions~ — map containing (backend, export function) pairs.
+
+  - ~burnish-backend~ — local file variable specifying with backend to use.
+
+#+VINDEX: burnish-bind
+- Command: burnish-bind ::
+
+  Turn on automatic export and viewing of an Org file.
+
+  For an Org file that has the local file variable ~burnish-backend~ specified,
+
+  Configure Emacs to run ~burnish~ whenever an Org file with ~burnish-backend~ defined is saved.
+
+  This command also binds ~burnish~ to the key sequence specified by ~burnish-export-key~.
+
+#+VINDEX: burnish-unbind
+- Command: burnish-unbind ::
+
+  Turn off automatic export and viewing of an Org file.
+
+  This command undoes all configuration done by ~burnish-bind~.
+
+#+VINDEX: burnish-select-backend
+- Command: burnish-select-backend CHOICE ::
+
+  Set local variable ‘burnish-backend’ to CHOICE in Org file.
+
+  This command modifies the Org file to set the local file variable ~burnish-backend~ within it.
+
+  See [[info:emacs#Specifying File Variables]] for more detail on local file variables.
+
+  When run interactively, ~burnish-select-backend~ prompts the user for a backend (CHOICE) to use when exporting and viewing an Org file. The prompt supports completion whose choices are the backend keys defined in the customizable variable ~burnish-export-functions~.
+
+** Customization
+#+CINDEX: Customization
+
+- Variable: burnish-backend ::
+  Local file variable that must be set in an Org file for the ~burnish~ command to run.
+
+- User Option: ~burnish-export-functions~ ::
+  Alist of export backends and their corresponding functions.
+
+  Each element is a cons cell (SYMBOL . FUNCTION) where SYMBOL is an export backend and FUNCTION is its corresponding export function.
+
+  This variable can be amended to support additional export backends provided that an export function for the new backend is defined.
+
+- User Option: burnish-export-key ::
+  String used to define the key sequence to bind the command ~burnish~. Default value {{{kbd(C-<f5>)}}}.
+
+
 
 * Feedback & Discussion
 #+CINDEX: Feedback
-Please report any feedback about *burnish* to the [[https://github.com/kickingvegas/burnish/issues][issue tracker on GitHub]].
+Please report any feedback about *Burnish* to the [[https://github.com/kickingvegas/burnish/issues][issue tracker on GitHub]].
 
 #+CINDEX: Discussion
-To participate in general discussion about using *burnish*, please join the [[https://github.com/kickingvegas/burnish/discussions][discussion group]].
+To participate in general discussion about using *Burnish*, please join the [[https://github.com/kickingvegas/burnish/discussions][discussion group]].
 
 * Sponsorship
 #+CINDEX: Sponsorship
@@ -74,9 +181,9 @@ To participate in general discussion about using *burnish*, please join the [[ht
 * About
 #+CINDEX: About
 
-[[https://github.com/kickingvegas/burnish][burnish]] was conceived and crafted by Charles Y. Choi in San Francisco, California.
+[[https://github.com/kickingvegas/burnish][Burnish]] was conceived and crafted by Charles Y. Choi in San Francisco, California.
 
-Thank you for using *burnish*.
+Thank you for using *Burnish*.
 
 Always choose love.
 
@@ -96,3 +203,7 @@ Index for this user guide.
 :END:
 
 Variables, functions, commands, and menus referenced by this user guide.
+
+  # Local Variables:
+  # burnish-backend: kvtexinfo
+  # End:
