@@ -6,7 +6,7 @@
 #+EMAIL: kickingvegas@gmail.com
 #+OPTIONS: ':t toc:t author:t email:t H:4 f:t
 #+LANGUAGE: en
-#+MACRO: version 0.0.1-rc.2
+#+MACRO: version 0.0.1-rc.3
 #+MACRO: kbd (eval (org-texinfo-kbd-macro $1))
 #+TEXINFO_FILENAME: burnish.info
 #+TEXINFO_CLASS: casual
@@ -53,7 +53,7 @@ Copyright © 2026 Charles Y. Choi
 
 - Support for additional export backends.
 
-  *Burnish* provides a high-degree of customization to support different export and view behaviors for both built-in and added backends.
+  *Burnish* provides a high-degree of customization to support different export and view behaviors for both built-in and user-added backends.
 
 - File-level control of running *Burnish*.
 

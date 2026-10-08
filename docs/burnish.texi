@@ -20,7 +20,7 @@ Copyright © 2026 Charles Y@. Choi
 @finalout
 @titlepage
 @title Burnish User Guide
-@subtitle for version 0.0.1-rc.2
+@subtitle for version 0.0.1-rc.3
 @author Charles Y@. Choi (@email{kickingvegas@@gmail.com})
 @page
 @vskip 0pt plus 1filll
@@ -33,7 +33,7 @@ Copyright © 2026 Charles Y@. Choi
 @node Top
 @top Burnish User Guide
 
-Version: 0.0.1-rc.2
+Version: 0.0.1-rc.3
 
 Copyright © 2026 @w{Charles Y. Choi}
 
@@ -98,7 +98,7 @@ Trigger export and view via @code{save-buffer} or by a customizable key binding 
 @item
 Support for additional export backends.
 
-@strong{Burnish} provides a high-degree of customization to support different export and view behaviors for both built-in and added backends.
+@strong{Burnish} provides a high-degree of customization to support different export and view behaviors for both built-in and user-added backends.
 
 @item
 File-level control of running @strong{Burnish}.
