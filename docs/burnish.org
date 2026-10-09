@@ -133,10 +133,10 @@ Details on commands and customization of *Burnish* can be found in the menu sect
 
 #+VINDEX: burnish-select-backend
 - Command: burnish-select-backend CHOICE ::
-  Prompt the user for CHOICE and set the local file variable ~burnish-backend~ to it in an Org file.
+  Prompt the user for CHOICE and set it to the local file variable ~burnish-backend~  in an Org file.
 
   The prompt supports completion where choices are taken from the keys defined in ~burnish-export-functions~.
-  
+
   This command will either add or update ~burnish-backend~ as detailed in [[info:emacs#Specifying File Variables]].
 
 
@@ -150,7 +150,6 @@ Details on commands and customization of *Burnish* can be found in the menu sect
 
   Disabling ~burnish-mode~ undoes the above.
 
-  
 ** Customization
 #+CINDEX: Customization
 
@@ -160,13 +159,15 @@ Details on commands and customization of *Burnish* can be found in the menu sect
   It is recommended to use the command ~burnish-select-backend~ to edit this variable in an Org file.
 
   The values supported by ~burnish-backend~ are the keys of the alist ~burnish-export-functions~. By default these keys are:
-  
+
   - html — export to HTML
   - md — export to Markdown
   - odt — export to Open Office Doc
   - info — export to Info via Texinfo
   - latex-pdf — export to LaTeX
-  
+
+  Any changes to this variable in the Org file will require reloading it with the ~revert-buffer~ command.
+
 - User Option: burnish-export-functions ::
   Alist of export backends and their corresponding functions.
 
@@ -202,7 +203,7 @@ Always choose love.
 * Acknowledgments
 #+CINDEX: Acknowledgments
 
-Thanks goes out to the contributors of Org Mode and GNU Emacs, whose work this builds upon. This work would not be possible without your efforts. 
+Thanks goes out to the contributors of Org Mode and GNU Emacs, whose work this builds upon. This work would not be possible without your efforts.
 
 * Main Index
 :PROPERTIES:
