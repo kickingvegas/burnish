@@ -187,7 +187,7 @@ This function is governed by two variables:
 
 @vindex burnish-select-backend
 @deffn Command burnish-select-backend CHOICE
-Prompt the user for CHOICE and set the local file variable @code{burnish-backend} to it in an Org file.
+Prompt the user for CHOICE and set it to the local file variable @code{burnish-backend}  in an Org file.
 
 The prompt supports completion where choices are taken from the keys defined in @code{burnish-export-functions}.
 
@@ -233,6 +233,8 @@ info — export to Info via Texinfo
 @item
 latex-pdf — export to @LaTeX{}
 @end itemize
+
+Any changes to this variable in the Org file will require reloading it with the @code{revert-buffer} command.
 @end defvar
 
 @defopt burnish-export-functions
