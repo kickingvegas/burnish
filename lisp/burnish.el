@@ -5,7 +5,7 @@
 ;; Author: Charles Y. Choi <kickingvegas@gmail.com>
 ;; URL: https://github.com/kickingvegas/burnish
 ;; Keywords: tools
-;; Package-Version: 0.0.1-rc.5
+;; Package-Version: 0.0.1-rc.6
 ;; Package-Requires: ((emacs "30.1"))
 
 ;; This program is free software; you can redistribute it and/or modify
