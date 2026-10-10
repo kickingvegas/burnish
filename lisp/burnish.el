@@ -5,7 +5,7 @@
 ;; Author: Charles Y. Choi <kickingvegas@gmail.com>
 ;; URL: https://github.com/kickingvegas/burnish
 ;; Keywords: tools
-;; Package-Version: 0.0.1-rc.3
+;; Package-Version: 0.0.1-rc.5
 ;; Package-Requires: ((emacs "30.1"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,31 @@
 
 ;;; Commentary:
 
-;; TBD
+;; Burnish is an Elisp package that automates the export and viewing of an Org
+;; file. With Burnish, users can rapidly iterate and review changes to an Org
+;; file.
+
+;; INSTALL
+
+;; Burnish is intended to be run as a minor mode (`burnish-mode') to Org mode.
+;; It can be added as a hook to `org-mode-hook'. This will always enable
+;; `burnish-mode' whenever an Org file is loaded.
+
+;;    (add-hook 'org-mode-hook #'burnish-mode)
+
+;; Alternately ‘burnish-mode’ can be invoked in an Org buffer as desired:
+
+;;    M-x burnish-mode RET
+
+;; With `burnish-mode', automated export of an Org file and viewing the
+;; result is done on every file save.  If this behavior is not desired,
+;; then an alternate install is to bind the command `burnish'.
+
+;;    (keymap-set org-mode-map burnish-export-key #'burnish)
+
+;; `burnish-export-key' is a customizable variable whose default value is
+;; ‘C-<f5>’.
+
 
 ;;; Code:
 
@@ -43,18 +67,19 @@
                                       (odt . burnish-export-odt)
                                       (info . burnish-export-info)
                                       (latex-pdf . burnish-export-latex-pdf))
-  "Alist of export targets their corresponding functions.
-
+  "Alist of export backends and their corresponding functions.
 Each element is a cons cell (SYMBOL . FUNCTION) where SYMBOL is an
-export target and FUNCTION is its corresponding export function.
+export backend and FUNCTION is its corresponding export function.
 
-This variable can be amended to support additional export types provided
-that an export function for the new export type is defined."
+This customizable variable can be amended to support additional export
+backends provided that an export function for the new backend is
+defined. Similarly, an existing export function can be overridden with a
+user-defined export function."
   :type '(alist :key-type symbol :value-type function)
   :group 'burnish)
 
 (defcustom burnish-export-key "C-<f5>"
-  "Key sequence to bind burnish command to."
+  "Key sequence to bind the command `burnish'."
   :type 'string
   :group 'burnish)
 
@@ -62,21 +87,19 @@ that an export function for the new export type is defined."
 ;; Variables
 
 (defvar burnish-backend nil
-  "Format backend to export Org file to.
+  "Local file variable that must be set in an Org file for `burnish' to run.
 
-This variable is intended to be set locally in an Org file as described
-in Info node `(emacs) Specifying File Variables'.
+It is recommended to use the command `burnish-select-backend' to edit
+this variable in an Org file.
 
-The value of `burnish-backend' is any key defined in
-`burnish-export-functions'.
+The values supported by `burnish-backend' are the keys of the alist
+`burnish-export-functions'. By default these keys are:
 
-An example of setting `burnish-backend' is shown below:
-
--- code begins
-\# Local Variables:
-\# burnish-backend: html
-\# End:
--- code ends
+html — export to HTML
+md — export to Markdown
+odt — export to Open Office Doc
+info — export to Info via Texinfo
+latex-pdf — export to LaTeX
 
 Any changes to this variable in the Org file will require reloading it
 with the `revert-buffer' command.")
@@ -128,7 +151,16 @@ with the `revert-buffer' command.")
 
 ;;;###autoload (autoload 'burnish "burnish" nil t)
 (defun burnish ()
-  "Burnish Org file."
+  "Run the Org export and view function as specified by `burnish-backend'.
+
+This function is governed by two variables:
+
+- `burnish-backend' — local file variable specifying which export backend
+  to use.
+
+- `burnish-export-functions' — alist map whose pairs are (SYMBOL
+  FUNCTION), where SYMBOL is a backend key and FUNCTION is its
+  corresponding export function."
   (interactive)
 
   (when (and (derived-mode-p 'org-mode)
@@ -145,11 +177,16 @@ with the `revert-buffer' command.")
 
 ;;;###autoload (autoload 'burnish-select-backend "burnish" nil t)
 (defun burnish-select-backend (choice)
-  "Edit local variable `burnish-backend' to CHOICE in Org file.
+  "Set `burnish-backend' to CHOICE in an Org file.
 
-Adds or updates the declaration of `burnish-backend' in an Org
-file, prompting the user to choose a target defined in
-`burnish-export-functions'.
+Prompt the user for CHOICE and set it the local file variable
+`burnish-backend' in an Org file.
+
+The prompt supports completion where choices are taken from the keys
+defined in `burnish-export-functions'.
+
+This command will either add or update `burnish-backend' as detailed in
+Info node `(emacs) Specifying File Variables'.
 
 To load the updated value, call `revert-buffer'."
   (interactive (list (completing-read "Choose Target: "
@@ -168,7 +205,13 @@ To load the updated value, call `revert-buffer'."
 
 ;;;###autoload (autoload 'burnish-mode "burnish" nil t)
 (define-minor-mode burnish-mode
-  "Minor mode for Burnish."
+  "Minor mode to enable automated Org file export and viewing of the result.
+
+When `burnish-mode' is enabled:
+- Automated export and view is triggered by a file save (`save-buffer').
+- The key sequence `burnish-export-key' is bound to the command `burnish'.
+
+Disabling `burnish-mode' undoes the above."
   :init-value nil
   :lighter " Bnsh"
   :keymap burnish-mode-map
