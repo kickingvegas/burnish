@@ -5,7 +5,7 @@
 ;; Author: Charles Y. Choi <kickingvegas@gmail.com>
 ;; URL: https://github.com/kickingvegas/burnish
 ;; Keywords: tools
-;; Package-Version: 0.0.1-rc.5
+;; Package-Version: 0.0.1-rc.6
 ;; Package-Requires: ((emacs "30.1"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -137,7 +137,7 @@ with the `revert-buffer' command.")
 
     (if (get-buffer "*info*")
         (kill-buffer "*info*"))
-    (info (file-name-with-extension basename "info"))
+    (info-other-window (file-name-with-extension basename "info"))
     (info-initialize)))
 
 (defun burnish-export-latex-pdf ()
@@ -213,7 +213,7 @@ When `burnish-mode' is enabled:
 
 Disabling `burnish-mode' undoes the above."
   :init-value nil
-  :lighter " Bnsh"
+  :lighter "  ≛ "
   :keymap burnish-mode-map
   (if (derived-mode-p 'org-mode)
       (if burnish-mode
