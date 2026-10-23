@@ -20,7 +20,7 @@ Copyright © 2026 Charles Y@. Choi
 @finalout
 @titlepage
 @title Burnish User Guide
-@subtitle for version 0.0.1-rc.6
+@subtitle for version 0.0.1-rc.7
 @author Charles Y@. Choi (@email{kickingvegas@@gmail.com})
 @page
 @vskip 0pt plus 1filll
@@ -33,13 +33,16 @@ Copyright © 2026 Charles Y@. Choi
 @node Top
 @top Burnish User Guide
 
-Version: 0.0.1-rc.6
+Version: 0.0.1-rc.7
 
 Copyright © 2026 @w{Charles Y. Choi}
 
 THIS DOCUMENT IS WIP@.
 
 @strong{Burnish} is an Elisp package that automates the export and viewing of an Org file (@ref{Top,,,org,}). With @strong{Burnish}@comma{} users can rapidly iterate and review changes to an Org file.
+
+@strong{Burnish} is intended to be run as a minor mode (@code{burnish-mode}) to Org mode. It is identified on the mode line with the glyph ‘≛’.
+
 
 If you enjoy using @strong{Burnish}@comma{} please consider buying me a coffee to help support its development and maintenance.
 
@@ -123,7 +126,7 @@ Only automate export and view on the files you specify.
 
 If manually installed@comma{} ensure that @code{burnish.el} is in your @code{load-path}.
 
-@strong{Burnish} is intended to be run as a minor mode (@code{burnish-mode}) to Org mode. It can be added as a hook to @code{org-mode-hook}. This will always enable @code{burnish-mode} whenever an Org file is loaded.
+To enable @code{burnish-mode} whenever an Org file is loaded@comma{} add it to @code{org-mode-hook} as follows:
 
 @lisp
 (add-hook 'org-mode-hook #'burnish-mode)
@@ -146,7 +149,9 @@ With @code{burnish-mode}@comma{} automated export of an Org file and viewing the
 @node Usage
 @chapter Usage
 
-When the minor mode @code{burnish-mode} is enabled@comma{} automated export of an Org file and viewing the result is performed on every save (@code{save-buffer}) of said file. However@comma{} automated export and view only works when the local file variable @code{burnish-backend} is defined in the Org file as detailed in @ref{Specifying File Variables,,,emacs,}. If @code{burnish-backend} is not defined in an Org file@comma{} nothing will be done by @strong{Burnish} on said file.
+@strong{Burnish} will only export and view an Org file that has the local file variable @code{burnish-backend} defined in it as detailed in @ref{Specifying File Variables,,,emacs,}.
+
+When the minor mode @code{burnish-mode} is enabled@comma{} automated export and viewing of the Org file is done on every file save (@code{save-buffer}).
 
 An example of setting @code{burnish-backend} is shown below@comma{} where the text is appended at the end of the file.
 
@@ -207,6 +212,8 @@ The key sequence @code{burnish-export-key} is bound to the command @code{burnish
 @end itemize
 
 Disabling @code{burnish-mode} undoes the above.
+
+@code{burnish-mode} is identified on the mode line with the glyph ‘≛’.
 @end deffn
 
 @node Customization

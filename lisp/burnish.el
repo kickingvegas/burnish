@@ -5,7 +5,7 @@
 ;; Author: Charles Y. Choi <kickingvegas@gmail.com>
 ;; URL: https://github.com/kickingvegas/burnish
 ;; Keywords: tools
-;; Package-Version: 0.0.1-rc.6
+;; Package-Version: 0.0.1-rc.7
 ;; Package-Requires: ((emacs "30.1"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -211,7 +211,9 @@ When `burnish-mode' is enabled:
 - Automated export and view is triggered by a file save (`save-buffer').
 - The key sequence `burnish-export-key' is bound to the command `burnish'.
 
-Disabling `burnish-mode' undoes the above."
+Disabling `burnish-mode' undoes the above.
+
+`burnish-mode' is identified on the mode line with the glyph ‘≛’."
   :init-value nil
   :lighter "  ≛ "
   :keymap burnish-mode-map

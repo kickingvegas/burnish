@@ -6,7 +6,7 @@
 #+EMAIL: kickingvegas@gmail.com
 #+OPTIONS: ':t toc:t author:t email:t H:4 f:t
 #+LANGUAGE: en
-#+MACRO: version 0.0.1-rc.6
+#+MACRO: version 0.0.1-rc.7
 #+MACRO: kbd (eval (org-texinfo-kbd-macro $1))
 #+TEXINFO_FILENAME: burnish.info
 #+TEXINFO_CLASS: casual
@@ -25,6 +25,9 @@ Version: {{{version}}}
 THIS DOCUMENT IS WIP.
 
 *Burnish* is an Elisp package that automates the export and viewing of an Org file ([[info:org#Top]]). With *Burnish*, users can rapidly iterate and review changes to an Org file.
+
+*Burnish* is intended to be run as a minor mode (~burnish-mode~) to Org mode. It is identified on the mode line with the glyph ‘≛’.
+
 
 #+INCLUDE: "./sponsorship.org"
 
@@ -77,7 +80,7 @@ Copyright © 2026 Charles Y. Choi
 
 If manually installed, ensure that ~burnish.el~ is in your ~load-path~.
 
-*Burnish* is intended to be run as a minor mode (~burnish-mode~) to Org mode. It can be added as a hook to ~org-mode-hook~. This will always enable ~burnish-mode~ whenever an Org file is loaded.
+To enable ~burnish-mode~ whenever an Org file is loaded, add it to ~org-mode-hook~ as follows:
 
 #+begin_src elisp :lexical no
   (add-hook 'org-mode-hook #'burnish-mode)
@@ -99,7 +102,9 @@ With ~burnish-mode~, automated export of an Org file and viewing the result is d
 
 * Usage
 
-When the minor mode ~burnish-mode~ is enabled, automated export of an Org file and viewing the result is performed on every save (~save-buffer~) of said file. However, automated export and view only works when the local file variable ~burnish-backend~ is defined in the Org file as detailed in [[info:emacs#Specifying File Variables]]. If ~burnish-backend~ is not defined in an Org file, nothing will be done by *Burnish* on said file.
+*Burnish* will only export and view an Org file that has the local file variable ~burnish-backend~ defined in it as detailed in [[info:emacs#Specifying File Variables]].
+
+When the minor mode ~burnish-mode~ is enabled, automated export and viewing of the Org file is done on every file save (~save-buffer~).
 
 An example of setting ~burnish-backend~ is shown below, where the text is appended at the end of the file.
 
@@ -149,6 +154,8 @@ Details on commands and customization of *Burnish* can be found in the menu sect
   - The key sequence ~burnish-export-key~ is bound to the command ~burnish~.
 
   Disabling ~burnish-mode~ undoes the above.
+
+  ~burnish-mode~ is identified on the mode line with the glyph ‘≛’.
 
 ** Customization
 #+CINDEX: Customization

@@ -27,7 +27,29 @@
 (require 'ert)
 (require 'burnish-test-utils)
 (require 'burnish)
+(require 'map)
 
+(ert-deftest test-burnish-export-functions ()
+  "Test `burnish-export-functions'."
+
+  (should (custom-variable-p 'burnish-export-functions))
+
+  (let* ((keys (list 'html 'md 'odt 'info 'latex-pdf)))
+    (mapc (lambda (key)
+            (should (map-contains-key burnish-export-functions key)))
+          keys))
+
+  (should (eq (map-elt burnish-export-functions 'html) #'burnish-export-html))
+  (should (eq (map-elt burnish-export-functions 'md) #'burnish-export-md))
+  (should (eq (map-elt burnish-export-functions 'odt) #'burnish-export-odt))
+  (should (eq (map-elt burnish-export-functions 'info) #'burnish-export-info))
+  (should (eq (map-elt burnish-export-functions 'latex-pdf) #'burnish-export-latex-pdf)))
+
+(ert-deftest test-burnish-export-key ()
+  "Test `burnish-export-key'."
+
+  (should (custom-variable-p 'burnish-export-key))
+  (should (string-equal burnish-export-key "C-<f5>")))
 
 (provide 'test-burnish)
 ;;; test-burnish.el ends here
