@@ -211,7 +211,9 @@ When `burnish-mode' is enabled:
 - Automated export and view is triggered by a file save (`save-buffer').
 - The key sequence `burnish-export-key' is bound to the command `burnish'.
 
-Disabling `burnish-mode' undoes the above."
+Disabling `burnish-mode' undoes the above.
+
+`burnish-mode' is identified on the mode line with the glyph ‘≛’."
   :init-value nil
   :lighter "  ≛ "
   :keymap burnish-mode-map

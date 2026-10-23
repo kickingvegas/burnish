@@ -1,10 +1,11 @@
 # [[https://melpa.org/#/burnish][file:https://melpa.org/packages/burnish-badge.svg]] [[https://stable.melpa.org/#/burnish][file:https://stable.melpa.org/packages/burnish-badge.svg]]
 
-* Burnish
+* Burnish ≛
 THIS PROJECT IS WIP.
 
 *Burnish* is an Elisp package that automates the export and viewing of an [[https://orgmode.org/][Org file]]. With *Burnish*, users can rapidly iterate and review changes to an Org file.
 
+*Burnish* is intended to be run as a minor mode (~burnish-mode~) to Org mode. It is identified on the mode line with the glyph ‘≛’.
 
 * Features
 
@@ -34,7 +35,7 @@ THIS PROJECT IS WIP.
 
 If manually installed, ensure that ~burnish.el~ is in your ~load-path~.
 
-*Burnish* is intended to be run as a minor mode (~burnish-mode~) to Org mode. It can be added as a hook to ~org-mode-hook~. This will always enable ~burnish-mode~ whenever an Org file is loaded.
+To enable ~burnish-mode~ whenever an Org file is loaded, add it to ~org-mode-hook~ as follows:
 
 #+begin_src elisp :lexical no
   (add-hook 'org-mode-hook #'burnish-mode)
@@ -57,7 +58,9 @@ With ~burnish-mode~, automated export of an Org file and viewing the result is d
   
 * Usage
 
-When the minor mode ~burnish-mode~ is enabled, automated export of an Org file and viewing the result is performed on every save (~save-buffer~) of said file. However, automated export and view only works when the local file variable ~burnish-backend~ is defined in the Org file as detailed in [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html][Specifying File Variables (GNU Emacs Manual)]]. If ~burnish-backend~ is not defined in an Org file, nothing will be done by *Burnish* on said file.
+*Burnish* will only export and view an Org file that has the local file variable ~burnish-backend~ defined in it as detailed in [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html][Specifying File Variables (GNU Emacs Manual)]].
+
+When the minor mode ~burnish-mode~ is enabled, automated export and viewing of the Org file is done on every file save (~save-buffer~).
 
 An example of setting ~burnish-backend~ is shown below, where the text is appended at the end of the file.
 
@@ -69,7 +72,8 @@ An example of setting ~burnish-backend~ is shown below, where the text is append
 
 Rather than typing the above in an Org file, the command ~burnish-select-backend~ will insert this for you, prompting for an export backend with completion support.
 
-To directly export an Org file and view the result, invoke the command ~burnish~ by its key binding (default: ~C-<f5>~) or by direct invocation (~M-x~)
+To directly export an Org file and view the result, invoke the command ~burnish~ by its key binding (default: ~C-<f5>~) or by direct invocation (~M-x burnish RET~)
+
 
 Refer to the [[https://kickingvegas.github.io/burnish/][Burnish User Guide]] for more details on using and customizing it.
 
